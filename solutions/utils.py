@@ -1,11 +1,6 @@
 import csv
 
 
-# def get_countries_data():
-#     with open("../../csv/countries of the world.csv") as f:
-#         lines = f.readlines()
-#     return lines
-
 def get_countries_data(file_path):
     with open(file_path) as f:
         data = [value.strip() for row in csv.reader(f) for value in row]
