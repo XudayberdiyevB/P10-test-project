@@ -12,7 +12,7 @@ print(get_countries_data("../solutions/custom_data.csv"))
 
 def custom_csv_writer(file_path, columns, data):
     with open(file_path, "w") as f:
-        csv_writer = csv.writer(f, )
+        csv_writer = csv.writer(f)
         csv_writer.writerow(columns)
         csv_writer.writerows(data)
 
