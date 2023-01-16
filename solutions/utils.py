@@ -3,7 +3,7 @@ import csv
 
 def get_countries_data(file_path):
     with open(file_path) as f:
-        data = [value.strip() for row in csv.reader(f) for value in row]
+        data = [[value.strip() for value in row] for row in csv.reader(f)]
     return data
 
 
