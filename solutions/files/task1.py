@@ -13,7 +13,7 @@ def get_population_gt_20m():
     """
     result = []
 
-    file_path = "../../csv/countries of the world.csv"
+    file_path = "../../csv_files/countries of the world.csv"
 
     for line in get_countries_data(file_path)[1:]:  # noqa
         name, count = line[0].strip(), int(line[2].strip())
