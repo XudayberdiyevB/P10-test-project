@@ -4,7 +4,7 @@ def get_population_gt_20m():
     """
     result = []
 
-    with open("../../csv/countries of the world.csv") as f:
+    with open("../../csv_files/countries of the world.csv") as f:
         lines = f.readlines()
 
     for line in lines[1:]:
