@@ -32,7 +32,7 @@ class Laptop(Computer):
 
 
 laptop_objs = []
-csv_file_path = "../csv/laptops.csv"
+csv_file_path = "laptops.csv"
 
 with open(csv_file_path) as f:
     csv_laptops_data = csv.DictReader(f)
