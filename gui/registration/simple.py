@@ -1,7 +1,8 @@
 import csv
 import os
 from datetime import datetime
-from tkinter import messagebox, END, Tk, Label, Entry, Button
+from tkinter import messagebox, END, Tk, Label, Entry, Button, Radiobutton, StringVar
+from tkcalendar import DateEntry
 
 from gui.registration.student import Student
 
@@ -17,7 +18,7 @@ def add():
         fullname_entry.get(),
         email_entry.get(),
         dob_entry.get(),
-        gender_entry.get(),
+        gender.get(),
         phone_entry.get(),
         course_entry.get(),
         datetime.now()
@@ -40,7 +41,6 @@ def clear():
     fullname_entry.delete(0, END)
     email_entry.delete(0, END)
     dob_entry.delete(0, END)
-    gender_entry.delete(0, END)
     phone_entry.delete(0, END)
     course_entry.delete(0, END)
 
@@ -60,14 +60,22 @@ email_entry.grid(row=1, column=1)
 # DOB - Date of birth
 dob_label = Label(window, text="DOB: ", padx=20, pady=10)
 dob_label.grid(row=2, column=0)
-dob_entry = Entry(window, width=30, borderwidth=3)
+dob_entry = DateEntry(window)
 dob_entry.grid(row=2, column=1)
 
 # Gender
+gender = StringVar()
+GENDER_TYPES = {"male": "Male", "female": "Female"}
 gender_label = Label(window, text="Gender: ", padx=20, pady=10)
 gender_label.grid(row=3, column=0)
-gender_entry = Entry(window, width=30, borderwidth=3)
-gender_entry.grid(row=3, column=1)
+male_radio_btn = Radiobutton(
+    window, text=GENDER_TYPES.get("male"), value="male", variable=gender
+)
+male_radio_btn.place(x=110, y=125)
+female_radio_btn = Radiobutton(
+    window, text=GENDER_TYPES.get("female"), value="female", variable=gender
+)
+female_radio_btn.place(x=180, y=125)
 
 # Phone
 phone_label = Label(window, text="Phone: ", padx=20, pady=10)
