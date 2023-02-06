@@ -1,11 +1,16 @@
 from datetime import datetime
 import json
 
+from environs import Env
+
 import requests
+
+env = Env()
+env.read_env()
 
 
 class WeatherManager:
-    API_KEY = "CquPBJVd8ethk04ibQ97XOP7Kg6HLKMd"
+    API_KEY = env("API_KEY")
 
     def __init__(self, city):
         self.city = city
