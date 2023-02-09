@@ -12,7 +12,7 @@ env.read_env()
 class WeatherManager:
     API_KEY = env("API_KEY")
 
-    def __init__(self, city):
+    def __init__(self, city=None):
         self.city = city
 
     @staticmethod
@@ -55,21 +55,24 @@ class WeatherManager:
         return data
 
     def get_daily_temperature(self):
-        data = []
-        for day in self.get_daily_data():
-            day_values = day.get("values")
-            average_temperature = None
-            if day_values:
-                average_temperature = day_values.get("temperatureAvg")
-            day_date = datetime.strptime(day.get("time"), "%Y-%m-%dT%H:%M:%SZ")
-            data.append({
-                "day": day_date.strftime("%Y.%m.%d"),
-                "average_temperature": average_temperature,
-                "hours": self.get_day_hours_temperature_with_time(day_date)
-            })
+        # data = []
+        # for day in self.get_daily_data():
+        #     day_values = day.get("values")
+        #     average_temperature = None
+        #     if day_values:
+        #         average_temperature = day_values.get("temperatureAvg")
+        #     day_date = datetime.strptime(day.get("time"), "%Y-%m-%dT%H:%M:%SZ")
+        #     data.append({
+        #         "day": day_date.strftime("%Y.%m.%d"),
+        #         "average_temperature": average_temperature,
+        #         "hours": self.get_day_hours_temperature_with_time(day_date)
+        #     })
+        #
+        # return data
 
-        return data
+        # From JSON file
+        with open("../api/weather.json") as f:
+            return json.load(f)
 
 
 city_weather = WeatherManager("tashkent")
-print(city_weather.get_daily_temperature())
