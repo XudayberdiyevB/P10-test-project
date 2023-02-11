@@ -27,5 +27,5 @@ languages_inline_btn.add(
     InlineKeyboardButton(list(LANGUAGES.keys())[2], callback_data=f"language_{list(LANGUAGES.values())[2]}"),
 )
 
-share_phone_btn = ReplyKeyboardMarkup()
+share_phone_btn = ReplyKeyboardMarkup(resize_keyboard=True)
 share_phone_btn.add(KeyboardButton("Share phone", request_contact=True))
