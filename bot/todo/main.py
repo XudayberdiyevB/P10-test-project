@@ -6,7 +6,7 @@ from telebot import custom_filters
 from telebot.storage import StateMemoryStorage
 from telebot.types import BotCommand, ReplyKeyboardRemove
 
-from bot.todo.keybords import languages_inline_btn, share_phone_btn
+from bot.todo.keybords import languages_inline_btn, share_phone_btn, get_language_btn
 from bot.todo.messages import messages
 from bot.todo.states import StudentRegistrationForm
 from bot.todo.task import Chat, Task
@@ -28,7 +28,7 @@ def welcome_message(message):
     chat_id = message.chat.id
     user = message.from_user
     fullname = get_fullname(user.first_name, user.last_name)
-    bot.send_message(chat_id, f"Assalomu alaykum, {fullname}", reply_markup=languages_inline_btn)
+    bot.send_message(chat_id, f"Assalomu alaykum, {fullname}", reply_markup=get_language_btn("register"))
     # bot.register_next_step_handler(message, set_language_handler)
 
 
@@ -47,10 +47,10 @@ def welcome_message(message):
 #     bot.send_message(chat.id, messages[LANGUAGES.get(message.text)].get("add_task"), reply_markup=ReplyKeyboardRemove())
 
 
-@bot.callback_query_handler(lambda call: call.data.startswith("language_"))
+@bot.callback_query_handler(lambda call: call.data.startswith("register_language_"))
 def set_language_query_handler(call):
     message = call.message
-    lang_code = call.data.split("_")[1]
+    lang_code = call.data.split("_")[2]
     chat = message.chat
     new_chat = Chat(
         chat.id,
@@ -88,7 +88,7 @@ def last_name_get(message):
         data['last_name'] = message.text
 
 
-@bot.message_handler(state=StudentRegistrationForm.phone, content_types=["contact"])
+@bot.message_handler(state=StudentRegistrationForm.phone, content_types=["contact", "text"])
 def phone_get(message):
     bot.send_message(message.chat.id, 'Yoshingizni kiriting:', reply_markup=ReplyKeyboardRemove())
     bot.set_state(message.from_user.id, StudentRegistrationForm.age, message.chat.id)
@@ -98,22 +98,29 @@ def phone_get(message):
 
 @bot.message_handler(state=StudentRegistrationForm.age)
 def age_get(message):
-    bot.send_message(message.chat.id, 'Tilni kiriting:')
+    bot.send_message(message.chat.id, 'Tilni kiriting:', reply_markup=get_language_btn("course"))
     bot.set_state(message.from_user.id, StudentRegistrationForm.language, message.chat.id)
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['age'] = message.text
 
 
-@bot.message_handler(state=StudentRegistrationForm.language)
-def language_get(message):
+@bot.callback_query_handler(lambda call: call.data.startswith("course_language_") , state=StudentRegistrationForm.language)
+def language_get(call):
+    message = call.message
+    # callback_data_example = "course_language_uz"
+    lang_code = call.data.split("_")[2]
     bot.send_message(message.chat.id, 'Kursni kiriting:')
     bot.set_state(message.from_user.id, StudentRegistrationForm.course, message.chat.id)
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
-        data['language'] = message.text
+        data['language'] = lang_code
 
 
-@bot.message_handler(state=StudentRegistrationForm.course)
-def course_get(message):
+@bot.callback_query_handler(lambda c: c.data.startswith("confirm_course_"), state=StudentRegistrationForm.course)
+def course_get(call):
+    message = call.message
+    # call_data_example = "confirm_course_yes"
+    confirm_answer = call.data.split("_")[2]
+
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['course'] = message.text
         msg = "Quyidagi ma'lumotlar qa'bul qilindi:\n"
@@ -122,7 +129,14 @@ def course_get(message):
         msg += f"Age: {data.get('age')}\n"
         msg += f"Language: {data.get('language')}\n"
         msg += f"Course: {data.get('course')}"
-        bot.send_message(message.chat.id, msg, parse_mode="html")
+        bot.send_message(message.chat.id, msg, parse_mode="html", reply_markup=confirm_btn)
+
+    if confirm_answer == "yes":
+        pass
+        # data
+    elif confirm_answer == "no":
+        bot.send_message(message.chat.id, "Ma'lumotlar saqlanmadi qaytadan /register")
+
     bot.delete_state(message.from_user.id, message.chat.id)
 
 
